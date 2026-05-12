@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit as st
 import pandas as pd
 from datetime import datetime
 from scraper import LinkedInJobScraper
@@ -7,13 +6,14 @@ from resume_matcher import ResumeMatcher
 from salary_predictor import SalaryPredictor
 
 st.set_page_config(page_title="LinkedIn Job Hunter", page_icon="🎯", layout="wide")
-
-def load_config():
-    """Initialize session state variables"""
-    if "openai_api_key" not in st.session_state:
-        st.session_state.openai_api_key = ""
-    if "jobs_data" not in st.session_state:
-        st.session_state.jobs_data = []
+# Azure OpenAI configuration
+AZURE_OPENAI_ENDPOINT = ""
+AZURE_OPENAI_KEY = "" # Azure OpenAI Key
+# Azure OpenAI configuration
+if "openai_api_key" not in st.session_state:
+    st.session_state.openai_api_key = AZURE_OPENAI_KEY or ""
+if "jobs_data" not in st.session_state:
+    st.session_state.jobs_data = []
 
 def save_results(jobs_df):
     """Save filtered job results to CSV file"""
@@ -23,19 +23,11 @@ def save_results(jobs_df):
     return filename
 
 def main():
-    load_config()
     st.title("🎯 LinkedIn Job Hunter")
     st.markdown("---")
 
     with st.sidebar:
-        st.header("⚙️ Configuration")
-        openai_api_key = st.text_input(
-            "OpenAI API Key", 
-            value=st.session_state.openai_api_key, 
-            type="password"
-        )
-        if openai_api_key:
-            st.session_state.openai_api_key = openai_api_key
+       
 
         st.markdown("---")
         st.header("📄 Resume")
@@ -47,12 +39,12 @@ def main():
         st.markdown("---")
         st.header("🔍 Filters")
         min_match_percentage = st.slider("Minimum Match %", 0, 100, 50, 5)
-        min_salary = st.number_input("Minimum Expected Salary ($)", 0, step=5000)
+        min_salary = st.number_input("Minimum Expected Salary", 3000000, step=5000)
         max_salary = st.number_input(
-            "Maximum Expected Salary ($)", 
+            "Maximum Expected Salary", 
             0, 
-            value=300000, 
-            step=5000
+            value=9000000,
+            step=500000
         )
 
     col1, col2 = st.columns([2, 1])
